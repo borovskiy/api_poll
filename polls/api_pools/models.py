@@ -5,6 +5,7 @@ User = get_user_model()
 
 
 class Poll(models.Model):
+    """Модель Опроса"""
     title = models.CharField(max_length=100, verbose_name='Заголовок')
     start_date = models.DateField(verbose_name='Дата начала опроса')
     end_date = models.DateField(verbose_name='Дата окончания опроса')
@@ -22,16 +23,18 @@ TYPES_QUESTION = (
 
 
 class Question(models.Model):
+    """Модель вопроса"""
     text = models.TextField(verbose_name='Текст вопроса')
     type_question = models.CharField(max_length=20, verbose_name='Тип вопроса', choices=TYPES_QUESTION, )
     poll = models.ForeignKey(Poll, blank=True, on_delete=models.CASCADE, related_name="questions")
 
     def __str__(self):
+        # Без такого в админке запутаться можно
         return f'{self.text}-{self.type_question}-{self.poll}'
 
 
 class ResponseContent(models.Model):
-    """Ответ для вопроса"""
+    """Модель ответа для вопроса"""
     option = models.TextField(verbose_name='Вариант ответа')
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="responses")
 
@@ -40,7 +43,7 @@ class ResponseContent(models.Model):
 
 
 class Answer(models.Model):
-    """Ответ пользователя"""
+    """Модель ответа пользователя"""
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="answers")
     many_response = models.ManyToManyField(ResponseContent)

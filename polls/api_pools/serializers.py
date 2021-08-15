@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.relations import PrimaryKeyRelatedField
@@ -11,6 +12,7 @@ class PoolSerializers(serializers.ModelSerializer):
     class Meta:
         model = Poll
         fields = ['id', 'title', 'start_date', 'end_date', 'description']
+
 
 class PoolUpdateSerializers(serializers.ModelSerializer):
     """Сериализатор для опросов"""
@@ -31,6 +33,7 @@ class ResponseContentSerializer(serializers.ModelSerializer):
 class QuestionsSerializers(serializers.ModelSerializer):
     """Сериализатор для вопросов к опроснику"""
     responses = ResponseContentSerializer(many=True, read_only=True)
+    poll = PoolSerializers(read_only=True)
 
     class Meta:
         model = Question
@@ -77,3 +80,21 @@ class AnswerForTextResponsesSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ['self_response']
         model = Answer
+
+
+class AnswerSerializer(serializers.ModelSerializer):
+    """Сериализатор для просмотра ответов"""
+    question = QuestionsSerializers(read_only=True)
+
+    class Meta:
+        fields = ['id', 'author', 'question', 'many_response', 'one_response', 'self_response']
+        model = Answer
+
+
+class UserSerializer(serializers.ModelSerializer):
+    """Серализатор для пользователя"""
+    answer = AnswerSerializer(source='answer_set.all', many=True, read_only=True)
+
+    class Meta:
+        fields = ['id', 'username', 'answer']
+        model = User

@@ -3,12 +3,12 @@ from .models import Poll, Question, Answer, ResponseContent
 
 
 class AdminPoll(admin.ModelAdmin):
-    list_display = ['id', 'title']
+    list_display = ['id', 'title', 'end_date']
     list_display_links = ['title']
 
 
 class AdminQuestion(admin.ModelAdmin):
-    list_display = ['id', 'text', 'poll']
+    list_display = ['id', 'text', 'poll', 'type_question']
     list_display_links = ['text']
 
 
